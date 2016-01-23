@@ -38,7 +38,7 @@ exports.get = function(roomid) { // All peers
     });
 };
 
-exports.join = function(room, peerid) {
+exports.join = function(roomid, peerid) {
     return Q.promise(function(resolve, reject) {
         Q.ninvoke(rooms, "findOne", { id: roomid })
         .then(function(room) {
