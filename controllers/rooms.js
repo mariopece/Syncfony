@@ -19,6 +19,17 @@ router.post("/create", function(req, res) { // { client: id }
     });
 });
 
+router.post("/delete", function(req, res) {
+    room.delete(req.body.room, req.body.client)
+    .then(function() {
+        res.end();
+    })
+    .fail(function(err) {
+        console.error(err.stack);
+        res.status(400).json({ "error": err.message });
+    });
+});
+
 router.post("/join", function(req, res) { // { room: id, client: id }
     room.join(req.body.room, req.body.client)
     .then(function() {
