@@ -5,7 +5,7 @@ var room = require("../models/room.js");
 router.get("/", function(req, res) {
     res.render("room", {
         layout: false
-    }); 
+    });
 });
 
 router.post("/create", function(req, res) { // { client: id }
@@ -20,7 +20,6 @@ router.post("/create", function(req, res) { // { client: id }
 });
 
 router.post("/join", function(req, res) { // { room: id, client: id }
-    console.log(req);
     room.join(req.body.room, req.body.client)
     .then(room.get(req.body.room))
     .then(function(peerids) {

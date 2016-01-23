@@ -26,22 +26,23 @@
                 sessionStorage.peerID = id;
                 console.log('Peer ID: ' + id);
             });
-            
+
             function createRoom()
             {
                 if(sessionStorage.roomID) return false;
-                $.ajax({url: "/room/create", data: "{'client':'"+sessionStorage.peerID+"'}", method: "POST", success: function(result){
+                var data = { "client": sessionStorage.peerID };
+                $.ajax({url: "/room/create", data: JSON.stringify(data), method: "POST", success: function(result){
                     var obj = jQuery.parseJSON(result);
                     sessionStorage.roomID = obj.room;
                     window.location.replace("index.html");
                 }});
             }
-            
+
             function joinRoom()
             {
                 if(sessionStorage.roomID) return false;
-                var sendData = JSON.stringify({ room: $('#joinRoomID').val(), client: sessionStorage.peerID });
-                $.ajax({url: "/room/join", data: sendData, method: "POST", success: function(result){
+                var data = { "room": $('#joinRoomID').val(), "client": sessionStorage.peerID };
+                $.ajax({url: "/room/join", data: JSON.stringify(data), method: "POST", success: function(result){
                 	sessionStorage.roomID = ('#joinRoomID').val();
                     sessionStorage.tempClientStore = result;
                     window.location.replace("index.html");
