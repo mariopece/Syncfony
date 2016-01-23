@@ -17,7 +17,7 @@ router.post("/join", function(req, res) { // { room: id, client: id }
     room.join(req.body.room, req.body.client)
     .then(room.get(req.body.room))
     .then(function(peerids) {
-        res.json({ "clients": peerids });
+        res.json({ "clients": JSON.stringify(peerids) });
     })
     .fail(function(err) {
         console.error(err);

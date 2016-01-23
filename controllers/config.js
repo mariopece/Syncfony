@@ -2,6 +2,7 @@ var bodyParser = require("body-parser");
 var compression = require("compression");
 var exphbs = require("express-handlebars");
 var morgan = require("morgan");
+var dateFormat = require("dateformat");
 
 module.exports = function(app, express) {
     require("console-stamp")(console, {
@@ -13,7 +14,7 @@ module.exports = function(app, express) {
     });
 
     morgan.token("time", function() {
-        return dateFormat(new Date(), settings.TIME_FORMAT);
+        return dateFormat(new Date(), "dd mmm HH:MM:ss");
     });
 
     // Middleware
