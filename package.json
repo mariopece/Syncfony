@@ -1,0 +1,30 @@
+{
+  "name": "syncfony",
+  "version": "1.0.0",
+  "description": "A centralized messaging system",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yicheng340/Syncfony.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yicheng340/Syncfony/issues"
+  },
+  "homepage": "https://github.com/yicheng340/Syncfony#readme",
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "compression": "^1.6.1",
+    "console-stamp": "^0.2.0",
+    "express": "^4.13.4",
+    "express-handlebars": "^2.0.1",
+    "gen-id": "^0.1.1",
+    "morgan": "^1.6.1",
+    "nedb": "^1.7.1",
+    "q": "^1.4.1"
+  }
+}
