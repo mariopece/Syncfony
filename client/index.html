@@ -1,54 +1,14 @@
-<!DOCTYPE html>
-<!--
-Copyright (C) 2016 Li Yicheng <liyicheng340 [at] gmail [dot com]>
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
 <html>
-    <head>
-        <title>Syncfony</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="http://cdn.peerjs.com/0.3/peer.min.js"></script>
-        <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
-        <script>
-            var roomJoined = false, roomID;
-    
-            if(sessionStorage.peerID)
-            {
-                var peer = new Peer(sessionStorage.peerID, {key: 'cnkznl0wfzf9wwmi'});
-            }
-            else
-            {
-                var peer = new Peer({key: 'cnkznl0wfzf9wwmi'});
-            }
-            peer.on('open', function(id) {
-                sessionStorage.peerID = id;
-                console.log('My peer ID is: ' + id);
-            });
-            
-            function createRoom()
-            {
-                if(roomJoined) return false;
-                
-            }
-            
-        </script>
-    </head>
-    <body>
-        <div>Welcome to Syncfony. What do you want to do today?</div>
-        <div>Join room</div>
-        <div>Create room</div>
-    </body>
+<head>
+    <title>Syncfony</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Lato|Raleway:400,200' rel='stylesheet' type='text/css'>
+</head>
+<body>
+    <header class="header">
+        <span class="logo">SYNCFONY</span>
+        <span class="room">Room # <input type="text" readonly value="12j18d8f" size="8"></span>
+    </header>
+</body>
 </html>
