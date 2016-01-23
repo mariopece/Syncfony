@@ -43,7 +43,8 @@ exports.join = function(room, peerid) {
         Q.ninvoke(rooms, "findOne", { id: roomid })
         .then(function(room) {
             if (!room) return reject(Error("Room does not exist"));
-            room.users.push(peerid);
+            if (! ~ room.users.indexOf(peerid))
+                room.users.push(peerid);
             Q.ninvoke(rooms, "update", { id: roomid }, { $set: room })
             .then(function() {
                 resolve();
