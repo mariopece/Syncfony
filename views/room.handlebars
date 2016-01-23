@@ -4,105 +4,127 @@
 	<title>Syncfony</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="http://cdn.peerjs.com/0.3/peer.min.js"></script>
-    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
-    <script src="/audiosynth.js"></script>
-    <link rel="stylesheet" type="text/css" href="../style.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-    <link href='https://fonts.googleapis.com/css?family=Lato|Raleway:400,200' rel='stylesheet' type='text/css'>
-    <script>
+	<script src="http://cdn.peerjs.com/0.3/peer.min.js"></script>
+	<script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+	<script src="/audiosynth.js"></script>
+	<link rel="stylesheet" type="text/css" href="../style.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+	<link href='https://fonts.googleapis.com/css?family=Lato|Raleway:400,200' rel='stylesheet' type='text/css'>
+	<script>
+		var peers = [], connections = [], peer;
+		
+		function musicReceiver(data)
+		{
+			playLocal(data.n, data.p, data.instrument);
+			console.log("received remote note: "+data.n);
+		}
+		
 		$(document).ready(function() {
-    	    var peers = [], connections = [];
-            
-            if(sessionStorage.peerID)
-            {
-                var peer = new Peer(sessionStorage.peerID, {key: 'cnkznl0wfzf9wwmi'});
-            }
-            else
-            {
-                //window.location.replace("/");
-            }
-            if(!sessionStorage.roomID)
-            {
-            	//window.location.replace("/");
-            }
-            
-            peer.on('open', function(id) {
-	            sessionStorage.peerID = id;
-	            console.log('My peer ID is: ' + id);
-	            if(sessionStorage.tempClientStore)
-	            {
-	            	var result = JSON.parse(sessionStorage.tempClientStore);
-	            	var result = JSON.parse(result);
-	            	//sessionStorage.removeItem("tempClientStore");
-	            	//console.log(sessionStorage.tempClientStore);
-	            	//console.log(result);
-	            	//result = JSON.parse(obj.clients);
-	            	//console.log(result);
-	            	for(var index = 0;index < result.length;index++)
-	            	{
-	            		if(result[index] !== sessionStorage.peerID) peers.push(result[index]);
-	            		//console.log(result[index]);
-	            	}
-	                peers.forEach(function (item) {
-	                    connections.push(peer.connect(item));
-	                    console.log(item);
-	                });
-            		$("#roomIDfield").val(sessionStorage.roomID.toString());
-	                $("#userCount").html((peers.length+1).toString());
-	            }
-	            else
-	            {
-	            	$("#userCount").html((peers.length+1).toString());
-            		$("#roomIDfield").val(sessionStorage.roomID.toString());
-	            }
-	        });
-	        
-	        peer.on('connection', function(conn) {
-	        	peers.push(conn.peer);
-	        	$("#userCount").html((peers.length+1).toString());
-	        });
-        });
-        
-    </script>
+			
+			
+			if(sessionStorage.peerID)
+			{
+				peer = new Peer(sessionStorage.peerID, {key: 'cnkznl0wfzf9wwmi'});
+			}
+			else
+			{
+				//window.location.replace("/");
+			}
+			if(!sessionStorage.roomID)
+			{
+				//window.location.replace("/");
+			}
+			
+			peer.on('open', function(id) {
+				sessionStorage.peerID = id;
+				console.log('My peer ID is: ' + id);
+				if(sessionStorage.tempClientStore)
+				{
+					var result = JSON.parse(sessionStorage.tempClientStore);
+					var result = JSON.parse(result);
+					//sessionStorage.removeItem("tempClientStore");
+					//console.log(sessionStorage.tempClientStore);
+					//console.log(result);
+					//result = JSON.parse(obj.clients);
+					//console.log(result);
+					for(var index = 0;index < result.length;index++)
+					{
+						if(result[index] !== sessionStorage.peerID) peers.push(result[index]);
+						//console.log(result[index]);
+					}
+					peers.forEach(function (item, index) {
+						connections.push(peer.connect(item));
+						console.log(item);
+					});
+					connections.forEach(function (conn, index) {
+						conn.on("data", musicReceiver);
+						console.log("listenerAdded");
+					});
+					$("#roomIDfield").val(sessionStorage.roomID.toString());
+					$("#userCount").html((peers.length+1).toString());
+				}
+				else
+				{
+					$("#userCount").html((peers.length+1).toString());
+					$("#roomIDfield").val(sessionStorage.roomID.toString());
+				}
+			});
+			
+			peer.on('connection', function(conn) {
+				peers.push(conn.peer);
+				connections.push(conn);
+				$("#userCount").html((peers.length+1).toString());
+				conn.on("data", musicReceiver);
+			});
+		});
+		
+	</script>
+	<script src="/sound.js"></script>
 </head>
 <body>
-    <header class="header">
-        <span class="logo">SYNCFONY</span>
-        <span class="users"><span id="userCount"></span> Users in this Room</span>
-        <span class="room">Room # <input type="text" readonly id="roomIDfield" name="roomIDfield" size="10"></span>
-    </header>
-    <main>
-    	<div class="instruments">
-    		<button class="green circle button selected" id="piano" onclick="switchInstrument(this)">P<span>Piano</span></button>
-    		<button class="circle button" id="organ" onclick="switchInstrument(this)">O<span>Organ</span></button>
-    		<button class="red circle button" id="acoustic" onclick="switchInstrument(this)">G<span>Acoustic Guitar</span></button>
-    		<button class="purple circle button" id="edm" onclick="switchInstrument(this)">E<span>EDM</span></button>
-    	</div>
-    	<div class="piano">
-    		<div class="white key button" onclick="piano(this.id)" id="113"><span>Q</span></div>
-    		<div class="black key button" onclick="piano(this.id)" id="50"><span>2</span></div>
-    		<div class="white key button" onclick="piano(this.id)" id="119"><span>W</span></div>
-    		<div class="black key button" onclick="piano(this.id)" id="51"><span>3</span></div>
-    		<div class="white key button" onclick="piano(this.id)" id="101"><span>E</span></div>
-    		<div class="key space"></div>
-    		<div class="white key button" onclick="piano(this.id)" id="114"><span>R</span></div>
-    		<div class="black key button" onclick="piano(this.id)" id="53"><span>5</span></div>
-    		<div class="white key button" onclick="piano(this.id)" id="116"><span>T</span></div>
-    		<div class="black key button" onclick="piano(this.id)" id="54"><span>6</span></div>
-    		<div class="white key button" onclick="piano(this.id)" id="121"><span>Y</span></div>
-    		<div class="black key button" onclick="piano(this.id)" id="55"><span>7</span></div>
-    		<div class="white key button" onclick="piano(this.id)" id="117"><span>U</span></div>
-    		<div class="key space"></div>
-    		<div class="white key button" onclick="piano(this.id)" id="105"><span>I</span></div>
-    		<div class="black key button" onclick="piano(this.id)" id="57"><span>9</span></div>
-    		<div class="white key button" onclick="piano(this.id)" id="111"><span>O</span></div>
-    		<div class="black key button" onclick="piano(this.id)" id="48"><span>0</span></div>
-    		<div class="white key button" onclick="piano(this.id)" id="112"><span>P</span></div>
-    
-    	</div>
-    </main>
-    
-    <script src="/sound.js"></script>
+	<header class="header">
+		<span class="logo">SYNCFONY</span>
+		<span class="users"><span id="userCount"></span> Users in this Room</span>
+		<span class="room">Room # <input type="text" readonly id="roomIDfield" name="roomIDfield" size="10"></span>
+	</header>
+	<main>
+		<div class="instruments">
+			<button class="green circle button selected" id="piano" onclick="switchInstrument(this)">P<span>Piano</span></button>
+			<button class="circle button" id="organ" onclick="switchInstrument(this)">O<span>Organ</span></button>
+			<button class="red circle button" id="acoustic" onclick="switchInstrument(this)">G<span>Acoustic Guitar</span></button>
+			<button class="purple circle button" id="edm" onclick="switchInstrument(this)">E<span>EDM</span></button>
+		</div>
+		<div class="piano">
+			<div class="white key button" onclick="simKey(this.id)" id="113"><span>Q</span></div>
+			<div class="black key button" onclick="simKey(this.id)" id="50"><span>2</span></div>
+			<div class="white key button" onclick="simKey(this.id)" id="119"><span>W</span></div>
+			<div class="black key button" onclick="simKey(this.id)" id="51"><span>3</span></div>
+			<div class="white key button" onclick="simKey(this.id)" id="101"><span>E</span></div>
+			<div class="key space"></div>
+			<div class="white key button" onclick="simKey(this.id)" id="114"><span>R</span></div>
+			<div class="black key button" onclick="simKey(this.id)" id="53"><span>5</span></div>
+			<div class="white key button" onclick="simKey(this.id)" id="116"><span>T</span></div>
+			<div class="black key button" onclick="simKey(this.id)" id="54"><span>6</span></div>
+			<div class="white key button" onclick="simKey(this.id)" id="121"><span>Y</span></div>
+			<div class="black key button" onclick="simKey(this.id)" id="55"><span>7</span></div>
+			<div class="white key button" onclick="simKey(this.id)" id="117"><span>U</span></div>
+			<div class="key space"></div>
+			<div class="white key button" onclick="simKey(this.id)" id="105"><span>I</span></div>
+			<div class="black key button" onclick="simKey(this.id)" id="57"><span>9</span></div>
+			<div class="white key button" onclick="simKey(this.id)" id="111"><span>O</span></div>
+			<div class="black key button" onclick="simKey(this.id)" id="48"><span>0</span></div>
+			<div class="white key button" onclick="simKey(this.id)" id="112"><span>P</span></div>
+			<div class="key space"></div>
+			<div class="pitch card">
+				<div class="up" onclick="pitchy(1)">&uarr;</div>
+				<div class="mid">
+					<div>Octave</div>
+					<div id="pitch">4</div>
+				</div>
+				<div class="down" onclick="pitchy(0)">&darr;</div>
+			</div>
+		</div>
+	</main>
+	
 </body>
 </html>

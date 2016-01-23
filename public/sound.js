@@ -2,14 +2,12 @@ var pitch = 4,
 	duration = 2,
 	instrument = "piano";
 
-
 document.onkeypress = function (event) {
 	var x =  event.which || event.keyCode;
-	//console.log(x);
-	piano(x);
+	simKey(x);
 };
 
-function piano(x){
+function simKey(x){
 	x=+x;
 	switch (x) {
 		case 113:
@@ -48,7 +46,6 @@ function piano(x){
 		case 117:
 			play('B', pitch);
 			break;
-
 		case 105:
 			play('C', pitch+1);
 			break;
@@ -64,14 +61,26 @@ function piano(x){
 		case 112:
 			play('E', pitch+1);
 			break;
+		case 91:
+			pitchy(0);
+			break;
+		case 93:
+			pitchy(1)
+			break;
 	}
 }
 
 function play(n, p) {
-	var inst = Synth.createInstrument(instrument);
+	var dataPrep = { "instrument": instrument, "n": n, "p": p };
+	connections.forEach(function (conn) {
+		conn.send(dataPrep);
+	});
+    playLocal(n, p, instrument);
+}
+
+function playLocal(n, p, inst2) {
+	var inst = Synth.createInstrument(inst2);
 	inst.play(n, p, duration);
-	
-	// Send note played
 }
 
 function switchInstrument(x) {
@@ -80,3 +89,12 @@ function switchInstrument(x) {
 	$("#"+x.id).addClass('selected');
 }
 
+function pitchy(x) {
+	if(x && pitch<8){
+		pitch++;
+	}
+	else if(!x && pitch>2){
+		pitch--;
+	}
+	document.getElementById('pitch').textContent = pitch;
+}

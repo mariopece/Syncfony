@@ -209,25 +209,29 @@ main{
     right: 0;
     margin: auto;
     height: 16em;
-    width: 40em;
+    width: 44em;
     max-height: 50%;
-    white-space: nowrap;
 }
 
-.button.key, .space.key {
-    width: 10%;
+.button.key, .space.key, .pitch.card {
+    width: 9.0909%;
     position: relative;
+    white-space: nowrap;
+    -webkit-user-select: none;  /* Chrome all / Safari all */
+    -moz-user-select: none;     /* Firefox all */
+    -ms-user-select: none;      /* IE 10+ */
+    user-select: none;          /* Likely future */   
 }
 
-.button.key.white {
+.button.key.white, .pitch.card {
     height: 100%;
-    margin-left:-10%;
+    margin-left:-9.0909%;
 }
 
 
 .button.key.black, .space.key {
     height: 70%;
-    left: -5%;
+    left: -4.5%;
     top: -30%;
     z-index: 2;
 }
@@ -237,6 +241,38 @@ main{
     bottom: 0.7em;
 }
 
-.space.key{
+.space.key, .pitch.card {
     display: inline-block;
+}
+
+.pitch.card {
+    background: #2196F3;
+    position: relative;
+    text-align: center;
+    color: #eee;
+}
+
+.pitch.card > div {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.pitch.card .up {
+    top: 1em;
+    cursor: pointer;
+}
+
+.pitch.card .mid {
+    top: 50%;
+    transform: translate(-50%,-50%);
+}
+
+.pitch.card .down {
+    bottom: 1em;
+    cursor: pointer;
+}
+
+.pitch.card #pitch {
+    font-size: 2em;
 }
