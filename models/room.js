@@ -10,7 +10,6 @@ var genId = require("gen-id")("xxxxxxxc");
 */
 
 exports.create = function(peerid) { // Returns room id
-    console.log(peerid);
     return Q.promise(function(resolve, reject) {
         var roomInfo = {
             id: genId.generate(),
@@ -19,6 +18,24 @@ exports.create = function(peerid) { // Returns room id
         Q.ninvoke(rooms, "insert", roomInfo)
         .then(function(room) {
             resolve(room.id);
+        })
+        .fail(function(err) {
+            reject(err);
+        });
+    });
+};
+
+exports.delete = function(roomid, peerid) {
+    return Q.promise(function(resolve, reject) {
+        Q.ninvoke(rooms, "findOne", { id: roomid })
+        .then(function(room) {
+            if (!room) return reject(Error("Room does not exist"));
+            if (~ room.users.indexOf(peerid))
+                room.users.splice(room.users.indexOf(peerid), 1);
+            Q.ninvoke(rooms, "update", { id: roomid }, { $set: room })
+            .then(function() {
+                resolve();
+            });
         })
         .fail(function(err) {
             reject(err);
