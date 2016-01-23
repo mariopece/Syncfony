@@ -12,11 +12,23 @@
 	<link href='https://fonts.googleapis.com/css?family=Lato|Raleway:400,200' rel='stylesheet' type='text/css'>
 	<script>
 		var peers = [], connections = [], peer;
+		var retardedUserCount = 1;
 		
-		function musicReceiver(data)
+		function dataReceiver(data)
 		{
-			playLocal(data.n, data.p, data.instrument);
-			console.log("received remote note: "+data.n);
+			if(!data.isDC)
+			{
+				playLocal(data.n, data.p, data.instrument);
+				console.log("received remote note: "+data.n);
+			}
+			//else
+			//	ghettoQuitHandler();
+		}
+		
+		function ghettoQuitHandler()
+		{
+			retardedUserCount--;
+			$("#userCount").html(retardedUserCount.toString());
 		}
 		
 		$(document).ready(function() {
@@ -40,8 +52,8 @@
 				console.log('My peer ID is: ' + id);
 				if(sessionStorage.tempClientStore)
 				{
+					sessionStorage.tempClientStore = JSON.parse(sessionStorage.tempClientStore);
 					var result = JSON.parse(sessionStorage.tempClientStore);
-					var result = JSON.parse(result);
 					//sessionStorage.removeItem("tempClientStore");
 					//console.log(sessionStorage.tempClientStore);
 					//console.log(result);
@@ -57,26 +69,45 @@
 						console.log(item);
 					});
 					connections.forEach(function (conn, index) {
-						conn.on("data", musicReceiver);
+						conn.on("data", dataReceiver);
+						conn.on("close", ghettoQuitHandler);
 						console.log("listenerAdded");
 					});
 					$("#roomIDfield").val(sessionStorage.roomID.toString());
-					$("#userCount").html((peers.length+1).toString());
+					retardedUserCount += peers.length;
+					$("#userCount").html(retardedUserCount.toString());
 				}
 				else
 				{
-					$("#userCount").html((peers.length+1).toString());
 					$("#roomIDfield").val(sessionStorage.roomID.toString());
+					retardedUserCount += peers.length;
+					$("#userCount").html(retardedUserCount.toString());
 				}
 			});
 			
 			peer.on('connection', function(conn) {
 				peers.push(conn.peer);
 				connections.push(conn);
-				$("#userCount").html((peers.length+1).toString());
-				conn.on("data", musicReceiver);
+				retardedUserCount++;
+				$("#userCount").html(retardedUserCount.toString());
+				conn.on("data", dataReceiver);
+				conn.on("close", ghettoQuitHandler);
 			});
 		});
+		
+		function exitHandler(){
+			var data = { "room": sessionStorage.roomID, "client": sessionStorage.peerID };
+            $.ajax({url: "/room/delete", data: data, method: "POST"});
+			var dataPrep = { "instrument": "guitar", "n": 'C', "p": 0 , "isDC": true };
+			connections.forEach(function (conn) {
+				conn.send(dataPrep);
+				conn.close();
+			});
+            sessionStorage.removeItem("roomID");
+			sessionStorage.removeItem("peerID");
+			sessionStorage.removeItem("tempClientStore");
+			peer.destroy();
+		};
 		
 	</script>
 	<script src="/sound.js"></script>
@@ -86,6 +117,7 @@
 		<span class="logo">SYNCFONY</span>
 		<span class="users"><span id="userCount"></span> Users in this Room</span>
 		<span class="room">Room # <input type="text" readonly id="roomIDfield" name="roomIDfield" size="10"></span>
+		<span class="exit room"><a href="/" onclick="exitHandler()">Exit</a></span>
 	</header>
 	<main>
 		<div class="instruments">
