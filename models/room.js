@@ -10,6 +10,7 @@ var genId = require("gen-id")("xxxxxxxc");
 */
 
 exports.create = function(peerid) { // Returns room id
+    console.log(peerid);
     return Q.promise(function(resolve, reject) {
         var roomInfo = {
             id: genId.generate(),

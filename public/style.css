@@ -1,5 +1,6 @@
 *{
     font-family: 'Lato', sans-serif;
+    box-sizing: border-box;
 }
 
 body {
@@ -155,6 +156,16 @@ body {
 	line-height: 2em;
 }
 
+.button.selected:before {
+    position: absolute;
+    left: -1em;
+    top: 0em;
+    content: ' ';
+    width: 3px;
+    height: 4em;
+    background: #2196F3;
+}
+
 main{
     height: 100%;
 }
@@ -193,28 +204,39 @@ main{
 
 .piano {
     position: absolute;
-    bottom: 1em;
-    left: 0;
+    bottom: 1.5em;
+    left: 4em;
     right: 0;
     margin: auto;
-    height: 20em;
+    height: 16em;
     width: 40em;
+    max-height: 50%;
+    white-space: nowrap;
 }
 
-.button.key {
+.button.key, .space.key {
     width: 10%;
+    position: relative;
 }
 
 .button.key.white {
     height: 100%;
+    margin-left:-10%;
 }
 
 
-.button.key.black {
+.button.key.black, .space.key {
     height: 70%;
+    left: -5%;
+    top: -30%;
+    z-index: 2;
 }
 
-.button.key > span{
+.button.key > span {
     position: absolute;
-    bottom: 0;
+    bottom: 0.7em;
+}
+
+.space.key{
+    display: inline-block;
 }

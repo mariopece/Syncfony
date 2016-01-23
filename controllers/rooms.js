@@ -11,7 +11,7 @@ router.get("/", function(req, res) {
 router.post("/create", function(req, res) { // { client: id }
     room.create(req.body.client)
     .then(function(roomid) {
-        res.json({ "room": id });
+        res.json({ "room": roomid });
     })
     .fail(function(err) {
         console.error(err.stack);
@@ -21,7 +21,9 @@ router.post("/create", function(req, res) { // { client: id }
 
 router.post("/join", function(req, res) { // { room: id, client: id }
     room.join(req.body.room, req.body.client)
-    .then(room.get(req.body.room))
+    .then(function() {
+        return room.get(req.body.room);
+    })
     .then(function(peerids) {
         res.json({ "clients": JSON.stringify(peerids) });
     })
