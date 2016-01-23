@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Syncfony</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://cdn.peerjs.com/0.3/peer.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Lato|Raleway:400,200' rel='stylesheet' type='text/css'>
+    <script>
+            var roomJoined = false, roomID;
+            var peers = [], connections = [];
+            
+            if(sessionStorage.peerID)
+            {
+                var peer = new Peer(sessionStorage.peerID, {key: 'cnkznl0wfzf9wwmi'});
+            }
+            else
+            {
+                var peer = new Peer({key: 'cnkznl0wfzf9wwmi'});
+            }
+            peer.on('open', function(id) {
+                sessionStorage.peerID = id;
+                console.log('My peer ID is: ' + id);
+            });
+            
+            function createRoom()
+            {
+                if(roomJoined) return false;
+                $.ajax({url: "somecreatesite", data: "{'client':'"+sessionStorage.peerID+"'}", success: function(result){
+                    roomID = result;
+                    roomJoined = true;
+                    $("#container").html(
+                        function(){
+                            return "Room joined insert html here your room ID is: "+roomID;
+                        }
+                    );
+                }});
+            }
+            
+            function joinRoom()
+            {
+                if(roomJoined) return false;
+                $.ajax({url: "somejoinsite", data: "{'room':'"+$('#joinRoomID').val()+"', 'client':'"+sessionStorage.peerID+"'}", success: function(result){
+                    roomID = $('#joinRoomID').val();
+                    roomJoined = true;
+                    $("#container").html(
+                        function(){
+                            return "room joined insert html here your room ID is: "+$('#joinRoomID').val();
+                        }
+                    );
+                    result.forEach(function (item, index, array) {
+                        peers.push(item);
+                    });
+                    peers.forEach(function (item, index, array) {
+                        if(item !== sessionStorage.peerID) connections.push(peer.connect(item));
+                    });
+                }});
+            }
+            
+        </script>
+</head>
+<body>
+    <div class="card middle">
+        <span class="logo">SYNCFONY</span>
+        <div class="divider"></div>
+        <div class="joinroom">Join room with ID<input type="text" name="joinRoomID" id="joinRoomID" placeholder="XXXXXXXX"></div>
+        <button class="green button">Enter</button> or <button class="button">Create New Room</button>
+    </div>
+</body>
+</html>
