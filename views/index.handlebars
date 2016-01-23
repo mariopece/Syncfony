@@ -40,7 +40,8 @@
             function joinRoom()
             {
                 if(sessionStorage.roomID) return false;
-                $.ajax({url: "/room/join", data: "{'room':'"+$('#joinRoomID').val()+"', 'client':'"+sessionStorage.peerID+"'}", method: "POST", success: function(result){
+                var sendData = JSON.stringify({ room: $('#joinRoomID').val(), client: sessionStorage.peerID });
+                $.ajax({url: "/room/join", data: sendData, method: "POST", success: function(result){
                 	sessionStorage.roomID = ('#joinRoomID').val();
                     sessionStorage.tempClientStore = result;
                     window.location.replace("index.html");
