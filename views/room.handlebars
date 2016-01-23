@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Syncfony</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://cdn.peerjs.com/0.3/peer.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Lato|Raleway:400,200' rel='stylesheet' type='text/css'>
+    <script>
+    	    var peers = [], connections = [];
+            
+            if(sessionStorage.peerID)
+            {
+                var peer = new Peer(sessionStorage.peerID, {key: 'cnkznl0wfzf9wwmi'});
+            }
+            else
+            {
+                //window.location.replace("enter.html");
+            }
+            if(!sessionStorage.roomID)
+            {
+            	//window.location.replace("enter.html");
+            }
+            peer.on('open', function(id) {
+                sessionStorage.peerID = id;
+                console.log('My peer ID is: ' + id);
+            });
+            
+            if(sessionStorage.tempClientStore)
+            {
+            	var obj = jQuery.parseJSON(sessionStorage.tempClientStore);
+            	sessionStorage.removeItem("tempClientStore");
+            	result = JSON.parse(obj.clients);
+            	result.forEach(function (item, index, array) {
+                    if(item !== sessionStorage.peerID) peers.push(item);
+                });
+                peers.forEach(function (item, index, array) {
+                    connections.push(peer.connect(item));
+                });
+            }
+            $("#userCount").html(peers.length);
+            $("#roomIDfield").val(sessionStorage.roomID);
+    </script>
+</head>
+<body>
+    <header class="header">
+        <span class="logo">SYNCFONY</span>
+        <span class="users"><span id="userCount"></span> Users in this Room</span>
+        <span class="room">Room # <input type="text" readonly id="roomIDfield" name="roomIDfield" size="10"></span>
+    </header>
+    <main>
+    	<div class="instruments">
+    		<button class="green circle button">P<span>Piano</span></button>
+    		<button class="circle button">O<span>Organ</span></button>
+    		<button class="red circle button">G<span>Acoustic Guitar</span></button>
+    		<button class="purple circle button">E<span>EDM</span></button>
+    	</div>
+    	<div class="piano">
+    		<div class="white key button">Q</div>
+    		<div class="black key button">2</div>
+    	</div>
+    </main>
+</body>
+</html>

@@ -5,7 +5,9 @@ var router = express.Router();
 router.use("/room", require("./rooms.js"));
 
 router.get("/", function(req, res, next) {
-    // Stub
+    res.render("index", {
+        layout: false
+    });
 });
 
 /* 404 & 500 */
