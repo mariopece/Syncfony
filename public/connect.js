@@ -5,10 +5,16 @@ function dataReceiver(data)
 {
 	if(!data.isDC)
 	{
-		playLocal(data.n, data.p, data.instrument);
-		console.log("received remote note: "+data.n+" from "+data.nickname);
-		
-		lightUp(data.nickname);
+		if(data.instrument !== "drum") {
+			playLocal(data.n, data.p, data.instrument);
+			console.log("received remote note: "+data.n+" from "+data.nickname);
+		}
+		else
+		{
+			drumLocal(data.x);
+			console.log("drum drum drum with x = "+data.x+" from "+data.nickname);
+		}
+		lightUp(data.nickname, data.instrument);
 		
 	}
 	else
@@ -26,9 +32,15 @@ function ghettoQuitHandler()
 			removeUser(item.nickname);
 			item.connection.isClosed = true;
 			console.log(item.nickname+" checked and is dead and has been removed.");
-			peers = peers.splice(index, 1);
+			//peers = peers.splice(index, 1);
 			retardedUserCount--;
 			//return;
+		}
+		else if(item.connection.open && item.connection.isClosed) {
+			addUser(item.nickname);
+			item.connection.isClosed = false;
+			console.log(item.nickname+" is actually alive and has been revived. welcome to the afterlife.");
+			retardedUserCount++;
 		}
 		else if(!item.connection.isClosed) console.log(item.nickname+" checked and is alive.");
 	});
@@ -44,11 +56,11 @@ $(document).ready(function() {
 	}
 	else
 	{
-		//window.location.replace("/");
+		window.location.replace("/");
 	}
 	if(!sessionStorage.roomID)
 	{
-		//window.location.replace("/");
+		window.location.replace("/");
 	}
 
 	peer.on('open', function(id) {
@@ -78,6 +90,8 @@ $(document).ready(function() {
 				}
 				//console.log(result[index]);
 			}
+			retardedUserCount = peers.length+1;
+			//ghettoQuitHandler();
 			/*peers.forEach(function (item) {
 				connections.push(peer.connect(item, { "label": sessionStorage.nickname }));
 				console.log(item);
@@ -88,7 +102,6 @@ $(document).ready(function() {
 				console.log("listenerAdded");
 			});*/
 			$("#roomIDfield").val(sessionStorage.roomID.toString());
-			retardedUserCount = peers.length+1;
 			$("#userCount").html(retardedUserCount.toString());
 		}
 		else
@@ -112,7 +125,7 @@ $(document).ready(function() {
 		//conn.on("data", dataReceiver);
 		//conn.on("close", ghettoQuitHandler);
 	});
-	setInterval(ghettoQuitHandler, 5000);
+	setInterval(ghettoQuitHandler, 2500);
 });
 
 function clientPeer(peerID, nickname)
@@ -142,9 +155,9 @@ function exitHandler() {
 	var data = { "room": sessionStorage.roomID, "client": sessionStorage.peerID };
     $.ajax({url: "/room/delete", data: data, method: "POST"});
 	//var dataPrep = { "instrument": "guitar", "n": 'C', "p": 0 , "isDC": true };
-	connections.forEach(function (conn) {
+	peers.forEach(function (conn) {
 		//conn.send(dataPrep);
-		conn.close();
+		conn.connection.close();
 	});
     sessionStorage.removeItem("roomID");
 	sessionStorage.removeItem("peerID");
@@ -166,8 +179,19 @@ function removeUser(name) {
 	document.getElementById(name).remove();
 }
 
-function lightUp(name) {
-	document.getElementById(name).children[1].style.background = "#2196F3";
+function lightUp(name, instrument) {
+	var color;
+	if(instrument=="piano")
+		color = "#4CAF50";
+	else if (instrument=="organ")
+		color = "#2196F3";
+	else if (instrument == "acoustic")
+		color = "#F44336";
+	else if (instrument == "edm")
+		color = "#9C27B0";
+	else
+		color = "#009688";
+	document.getElementById(name).children[1].style.background = color;
 	setTimeout(function(){
 		document.getElementById(name).children[1].style.background = "";
 	},500)

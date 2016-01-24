@@ -175,6 +175,14 @@ function openInstrument(x) {
 }
 
 function drum(x) {
+	var dataPrep = { "instrument": "drum", "x": x, "nickname": sessionStorage.nickname,"isDC": false};
+	peers.forEach(function (conn) {
+		conn.connection.send(dataPrep);
+	});
+    drumLocal(x);
+}
+
+function drumLocal(x) {
 	var d = document.getElementById('a'+x);
 	d.currentTime=0;
 	d.play();

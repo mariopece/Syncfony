@@ -162,6 +162,22 @@ body {
 	background: #222;
 }
 
+.button.teal {
+	background: #009688;
+}
+
+.button.teal:hover {
+	background: #00796B;
+}
+
+.button.indigo {
+	background: #3F51B5;
+}
+
+.button.indigo:hover {
+	background: #303F9F;
+}
+
 .button.circle {
 	width: 4em;
 	height: 4em;
@@ -197,6 +213,7 @@ main{
 	display: block;
 	margin-bottom: 1em;
 	position: relative;
+	line-height: 3em;
 }
 
 .instruments .button>span {
@@ -213,6 +230,11 @@ main{
 	border-radius: 2em;
 	line-height: 1em;
 	text-transform: none;
+}
+
+.instruments .button img{
+    height: 1.5em;
+    width: 1.5em;
 }
 
 .instruments .button:hover>span {
@@ -324,6 +346,7 @@ main{
 .card h2{
     font-weight: 400;
     margin: 0;
+    font-size: 1.2em;
 }
 
 .card .indicator{
@@ -364,4 +387,36 @@ main{
     position: absolute;
     bottom: 1em;
     right: 1em;
+    font-size: 13.33px;
+}
+
+.switch .button {
+    position: relative;
+}
+
+.switch .button img {
+    height: 3em;
+    width: 3em;
+}
+
+.switch .button>span {
+	opacity: 0;
+	z-index: -1;
+	transition: 0.2s;
+	position: absolute;
+	width: 7em;
+	left: -2em;
+	top: -3.2em;
+	display: inline-block;
+	background: #212121;
+	padding: 1em;
+	border-radius: 10em;
+	line-height: 1em;
+	text-transform: none;
+	white-space: nowrap;
+	text-align: center;
+}
+
+.switch .button:hover>span {
+    opacity: 1;
 }

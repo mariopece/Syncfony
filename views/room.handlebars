@@ -28,10 +28,10 @@
 	</header>
 	<main>
 		<div class="instruments">
-			<button class="green circle button selected" id="piano" onclick="switchInstrument(this)">P<span>Piano [z]</span></button>
-			<button class="circle button" id="organ" onclick="switchInstrument(this)">O<span>Organ [x]</span></button>
-			<button class="red circle button" id="acoustic" onclick="switchInstrument(this)">G<span>Acoustic Guitar [c]</span></button>
-			<button class="purple circle button" id="edm" onclick="switchInstrument(this)">E<span>EDM [v]</span></button>
+			<button class="green circle button selected" id="piano" onclick="switchInstrument(this)"><img src="/piano.png"><span>Piano [z]</span></button>
+			<button class="circle button" id="organ" onclick="switchInstrument(this)"><img src="/organ.png"><span>Organ [x]</span></button>
+			<button class="red circle button" id="acoustic" onclick="switchInstrument(this)"><img src="/guitar.png"><span>Acoustic Guitar [c]</span></button>
+			<button class="purple circle button" id="edm" onclick="switchInstrument(this)"><img src="/edm.png"><span>EDM [v]</span></button>
 		</div>
 		<div id="usercontainer">
 			<div class="logo">PEOPLE IN THIS ROOM</div>
@@ -74,8 +74,8 @@
 			<div class="white drum button" onclick="simKey(this.id)" id="108"><span>Cymbals<br><kbd>L</kbd></span></div>
 		</div>
 		<div class="switch">
-			<div class="purple button" onclick="openInstrument('drum')">Drum</div>
-			<div class="green button" onclick="openInstrument('keyboard')">Keyboard</div>
+			<div class="indigo button" onclick="openInstrument('keyboard')"><img src="/piano.png"><span>Keyboard</span></div>
+			<div class="teal button" onclick="openInstrument('drum')"><img src="/drum.png"><span>Drum Pad</span></div>
 		</div>
 	</main>
 
