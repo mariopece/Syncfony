@@ -65,7 +65,7 @@ function simKey(x){
 			pitchy(0);
 			break;
 		case 93:
-			pitchy(1)
+			pitchy(1);
 			break;
 	}
 }
