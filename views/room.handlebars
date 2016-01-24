@@ -12,28 +12,29 @@
 	<link href='https://fonts.googleapis.com/css?family=Lato|Raleway:400,200' rel='stylesheet' type='text/css'>
 	<script>
 		var peers = [], connections = [], peer;
+		var userList = [];
 		var retardedUserCount = 1;
-		
+
 		function dataReceiver(data)
 		{
 			if(!data.isDC)
 			{
 				playLocal(data.n, data.p, data.instrument);
-				console.log("received remote note: "+data.n);
+				console.log("received remote note: "+data.n+" from "+data.nickname);
 			}
 			//else
 			//	ghettoQuitHandler();
 		}
-		
+
 		function ghettoQuitHandler()
 		{
 			retardedUserCount--;
 			$("#userCount").html(retardedUserCount.toString());
 		}
-		
+
 		$(document).ready(function() {
-			
-			
+
+
 			if(sessionStorage.peerID)
 			{
 				peer = new Peer(sessionStorage.peerID, {key: 'cnkznl0wfzf9wwmi'});
@@ -46,10 +47,11 @@
 			{
 				//window.location.replace("/");
 			}
-			
+
 			peer.on('open', function(id) {
 				sessionStorage.peerID = id;
 				console.log('My peer ID is: ' + id);
+				console.log('My nickname is: ' + sessionStorage.nickname);
 				if(sessionStorage.tempClientStore)
 				{
 					sessionStorage.tempClientStore = JSON.parse(sessionStorage.tempClientStore);
@@ -61,14 +63,18 @@
 					//console.log(result);
 					for(var index = 0;index < result.length;index++)
 					{
-						if(result[index] !== sessionStorage.peerID) peers.push(result[index]);
+						if(result[index].id !== sessionStorage.peerID) {
+							peers.push(result[index].id);
+							userList.push(result[index].nickname);
+							console.log("Connected to user: " + result[index].nickname);
+						}
 						//console.log(result[index]);
 					}
-					peers.forEach(function (item, index) {
-						connections.push(peer.connect(item));
+					peers.forEach(function (item) {
+						connections.push(peer.connect(item, { "label": sessionStorage.nickname }));
 						console.log(item);
 					});
-					connections.forEach(function (conn, index) {
+					connections.forEach(function (conn) {
 						conn.on("data", dataReceiver);
 						conn.on("close", ghettoQuitHandler);
 						console.log("listenerAdded");
@@ -84,17 +90,19 @@
 					$("#userCount").html(retardedUserCount.toString());
 				}
 			});
-			
+
 			peer.on('connection', function(conn) {
 				peers.push(conn.peer);
 				connections.push(conn);
+				console.log("Connecttd to user: " + conn.label);
+				userList.push(conn.label);
 				retardedUserCount++;
 				$("#userCount").html(retardedUserCount.toString());
 				conn.on("data", dataReceiver);
 				conn.on("close", ghettoQuitHandler);
 			});
 		});
-		
+
 		function exitHandler(){
 			var data = { "room": sessionStorage.roomID, "client": sessionStorage.peerID };
             $.ajax({url: "/room/delete", data: data, method: "POST"});
@@ -108,7 +116,7 @@
 			sessionStorage.removeItem("tempClientStore");
 			peer.destroy();
 		};
-		
+
 	</script>
 	<script src="/sound.js"></script>
 </head>
@@ -157,6 +165,6 @@
 			</div>
 		</div>
 	</main>
-	
+
 </body>
 </html>

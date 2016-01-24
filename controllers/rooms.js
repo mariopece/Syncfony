@@ -9,7 +9,7 @@ router.get("/", function(req, res) {
 });
 
 router.post("/create", function(req, res) { // { client: id }
-    room.create(req.body.client)
+    room.create(req.body.client, req.body.nickname)
     .then(function(roomid) {
         res.json({ "room": roomid });
     })
@@ -31,7 +31,7 @@ router.post("/delete", function(req, res) {
 });
 
 router.post("/join", function(req, res) { // { room: id, client: id }
-    room.join(req.body.room, req.body.client)
+    room.join(req.body.room, req.body.client, req.body.nickname)
     .then(function() {
         return room.get(req.body.room);
     })

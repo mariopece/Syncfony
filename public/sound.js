@@ -71,7 +71,7 @@ function simKey(x){
 }
 
 function play(n, p) {
-	var dataPrep = { "instrument": instrument, "n": n, "p": p , "isDC": false};
+	var dataPrep = { "instrument": instrument, "n": n, "p": p, "nickname": sessionStorage.nickname,"isDC": false};
 	connections.forEach(function (conn) {
 		conn.send(dataPrep);
 	});

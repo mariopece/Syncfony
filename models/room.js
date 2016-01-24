@@ -9,11 +9,11 @@ var genId = require("gen-id")("xxxxxxxc");
     users: [ peerjs_id ]
 */
 
-exports.create = function(peerid) { // Returns room id
+exports.create = function(peerid, nickname) { // Returns room id
     return Q.promise(function(resolve, reject) {
         var roomInfo = {
             id: genId.generate(),
-            users: [ peerid ]
+            users: [ { "id": peerid, "nickname": nickname} ]
         };
         Q.ninvoke(rooms, "insert", roomInfo)
         .then(function(room) {
@@ -30,12 +30,22 @@ exports.delete = function(roomid, peerid) {
         Q.ninvoke(rooms, "findOne", { id: roomid })
         .then(function(room) {
             if (!room) return reject(Error("Room does not exist"));
-            if (~ room.users.indexOf(peerid))
-                room.users.splice(room.users.indexOf(peerid), 1);
-            Q.ninvoke(rooms, "update", { id: roomid }, { $set: room })
-            .then(function() {
-                resolve();
-            });
+            console.log(room);
+            for (var a = 0; a < room.users.length; ++a)
+                if (room.users[a].id === peerid) {
+                    room.users.splice(a, 1);
+                    break;
+                }
+            if (!room.users.length)
+                Q.ninvoke(rooms, "remove", { id: roomid })
+                .then (function() {
+                    resolve();
+                });
+            else
+                Q.ninvoke(rooms, "update", { id: roomid }, { $set: room })
+                .then(function() {
+                    resolve();
+                });
         })
         .fail(function(err) {
             reject(err);
@@ -56,13 +66,19 @@ exports.get = function(roomid) { // All peers
     });
 };
 
-exports.join = function(roomid, peerid) {
+exports.join = function(roomid, peerid, nickname) {
     return Q.promise(function(resolve, reject) {
         Q.ninvoke(rooms, "findOne", { id: roomid })
         .then(function(room) {
             if (!room) return reject(Error("Room does not exist"));
-            if (! ~ room.users.indexOf(peerid))
-                room.users.push(peerid);
+            var present = false;
+            for (var a = 0; a < room.users.length; ++a)
+                if (room.users[a].id === peerid) {
+                    present = true;
+                    break;
+                }
+            if (!present)
+                room.users.push({ "id": peerid, "nickname": nickname });
             Q.ninvoke(rooms, "update", { id: roomid }, { $set: room })
             .then(function() {
                 resolve();
