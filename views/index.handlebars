@@ -4,14 +4,22 @@
     <title>Syncfonia</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="http://cdn.peerjs.com/0.3/peer.min.js"></script>
-    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-    <link href='https://fonts.googleapis.com/css?family=Lato|Raleway:400,200' rel='stylesheet' type='text/css'>
+    <script src="/peer.min.js"></script>
+	<script src="/jquery-2.2.0.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="../style.css">
+	<link rel="stylesheet" href="/font-awesome.min.css">
+	<link href='/font-google.css' rel='stylesheet' type='text/css'>
     <script>
         $(document).ready(function() {
-            if(sessionStorage.roomID)
+            var peer;
+            if(sessionStorage.exited)
+            {
+                sessionStorage.removeItem("roomID");
+            	sessionStorage.removeItem("peerID");
+            	sessionStorage.removeItem("tempClientStore");
+            	sessionStorage.removeItem("nickname");
+            }
+            if(sessionStorage.roomID && !sessionStorage.exited)
             {
             	window.location.replace("./room/");
             }

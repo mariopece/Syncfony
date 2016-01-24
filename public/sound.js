@@ -1,10 +1,47 @@
 var pitch = 4,
 	duration = 2,
-	instrument = "piano";
+	instrument = "piano",
+	osk="drum";
 
 document.onkeypress = function (event) {
 	var x =  event.which || event.keyCode;
 	simKey(x);
+	if(x==106) x = 100;
+	console.log(x);
+	var d = $("#"+x);
+	if(d.hasClass("key")) {
+		if(d.hasClass("black")) {
+			d.css("background","#222");
+		}
+		else {
+			d.css("background","#eee");
+		}
+		d.css({
+		    "transform": "translateY(2px)",
+		    "box-shadow": "0 0 2px rgba(0,0,0,0.2)"
+		});
+		setTimeout(function() {
+			d.css({
+				"background": "",
+			    "transform": "",
+			    "box-shadow": ""
+			});
+		}, 200)
+	}
+	else if(d.hasClass("drum")) {
+		d.css({
+			"background":"#eee",
+		    "transform": "translateY(2px)",
+		    "box-shadow": "0 0 2px rgba(0,0,0,0.2)"
+		});
+		setTimeout(function() {
+			d.css({
+				"background": "",
+			    "transform": "",
+			    "box-shadow": ""
+			});
+		}, 200)
+	}
 };
 
 function simKey(x){
@@ -67,13 +104,43 @@ function simKey(x){
 		case 93:
 			pitchy(1);
 			break;
+		case 122:
+			switchInstrument({id:"piano"});
+			break;
+		case 120:
+			switchInstrument({id:"organ"});
+			break;
+		case 99:
+			switchInstrument({id:"acoustic"});
+			break;
+		case 118:
+			switchInstrument({id:"edm"});
+			break;
+		case 97:
+			drum("tom");
+			break;
+		case 115:
+			drum("bass");
+			break;
+		case 100:
+			drum("snare");
+			break;
+		case 106:
+			drum("snare");
+			break;
+		case 107:
+			drum("hihat");
+			break;
+		case 108:
+			drum("cymbals");
+			break;
 	}
 }
 
 function play(n, p) {
 	var dataPrep = { "instrument": instrument, "n": n, "p": p, "nickname": sessionStorage.nickname,"isDC": false};
-	connections.forEach(function (conn) {
-		conn.send(dataPrep);
+	peers.forEach(function (conn) {
+		conn.connection.send(dataPrep);
 	});
     playLocal(n, p, instrument);
 }
@@ -97,4 +164,22 @@ function pitchy(x) {
 		pitch--;
 	}
 	document.getElementById('pitch').textContent = pitch;
+}
+
+function openInstrument(x) {
+	if(x!=osk){
+		document.getElementById(osk).style.transform="translateY(50em)";
+		document.getElementById(x).style.transform="";
+		osk = x;
+	}
+}
+
+function drum(x) {
+	var d = document.getElementById('a'+x);
+	d.currentTime=0;
+	d.play();
+}
+
+window.onload = function() {
+	openInstrument("keyboard");
 }
