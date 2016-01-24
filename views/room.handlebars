@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Syncfony</title>
+	<title>Syncfonia</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="http://cdn.peerjs.com/0.3/peer.min.js"></script>
@@ -122,7 +122,7 @@
 </head>
 <body>
 	<header class="header">
-		<span class="logo">SYNCFONY</span>
+		<span class="logo">SYNCFONIA</span>
 		<span class="users"><span id="userCount"></span> Users in this Room</span>
 		<span class="room">Room # <input type="text" readonly id="roomIDfield" name="roomIDfield" size="10"></span>
 		<span class="exit room"><a href="/" onclick="exitHandler()">Exit</a></span>
@@ -133,6 +133,11 @@
 			<button class="circle button" id="organ" onclick="switchInstrument(this)">O<span>Organ</span></button>
 			<button class="red circle button" id="acoustic" onclick="switchInstrument(this)">G<span>Acoustic Guitar</span></button>
 			<button class="purple circle button" id="edm" onclick="switchInstrument(this)">E<span>EDM</span></button>
+		</div>
+		<div class="user card">
+			<!--h2>Users in this room</h2-->
+			<h2>mjgui</h2>
+			<div class="indicator"></div>
 		</div>
 		<div class="piano">
 			<div class="white key button" onclick="simKey(this.id)" id="113"><span>Q</span></div>
