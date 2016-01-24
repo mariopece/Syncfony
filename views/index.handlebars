@@ -15,6 +15,7 @@
             var peer;
             if(sessionStorage.exited)
             {
+                sessionStorage.removeItem("exited");
                 sessionStorage.removeItem("roomID");
             	sessionStorage.removeItem("peerID");
             	sessionStorage.removeItem("tempClientStore");
