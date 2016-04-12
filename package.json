@@ -17,15 +17,15 @@
   },
   "homepage": "https://github.com/yicheng340/Syncfony#readme",
   "dependencies": {
-    "body-parser": "^1.14.2",
+    "body-parser": "^1.15.0",
     "compression": "^1.6.1",
     "console-stamp": "^0.2.0",
     "dateformat": "^1.0.12",
     "express": "^4.13.4",
     "express-handlebars": "^2.0.1",
     "gen-id": "^0.1.1",
-    "morgan": "^1.6.1",
-    "nedb": "^1.7.1",
+    "morgan": "^1.7.0",
+    "nedb": "^1.8.0",
     "q": "^1.4.1"
   }
 }
