@@ -9,13 +9,14 @@ router.get("/", function(req, res) {
 });
 
 router.post("/create", function(req, res) { // { client: id }
+    console.log("Creating room");
     room.create(req.body.client, req.body.nickname)
-    .then(function(roomid) {
-        res.json({ "room": roomid });
+    .then(function(room) {
+        res.json({ room: room.id });
     })
-    .fail(function(err) {
+    .catch(function(err) {
         console.error(err.stack);
-        res.status(400).json({ "error": err.message });
+        res.status(400).json({ error: err.message });
     });
 });
 
@@ -24,9 +25,9 @@ router.post("/delete", function(req, res) {
     .then(function() {
         res.end();
     })
-    .fail(function(err) {
+    .catch(function(err) {
         console.error(err.stack);
-        res.status(400).json({ "error": err.message });
+        res.status(400).json({ error: err.message });
     });
 });
 
@@ -38,9 +39,9 @@ router.post("/join", function(req, res) { // { room: id, client: id }
     .then(function(peerids) {
         res.json({ "clients": JSON.stringify(peerids) });
     })
-    .fail(function(err) {
+    .catch(function(err) {
         console.error(err.stack);
-        res.status(400).json({ "error": err.message });
+        res.status(400).json({ error: err.message });
     });
 });
 

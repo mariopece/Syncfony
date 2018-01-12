@@ -1,7 +1,8 @@
-var Q = require("q");
+var Promise = require("bluebird");
 var nedb = require("nedb");
 var rooms = new nedb({ filename: "./database/rooms", autoload: true });
 var genId = require("gen-id")("xxxxxxxc");
+Promise.promisifyAll(rooms);
 
 // Room
 /*
@@ -10,82 +11,48 @@ var genId = require("gen-id")("xxxxxxxc");
 */
 
 exports.create = function(peerid, nickname) { // Returns room id
-    return Q.promise(function(resolve, reject) {
-        var roomInfo = {
-            id: genId.generate(),
-            users: [ { "id": peerid, "nickname": nickname} ]
-        };
-        Q.ninvoke(rooms, "insert", roomInfo)
-        .then(function(room) {
-            resolve(room.id);
-        })
-        .fail(function(err) {
-            reject(err);
-        });
-    });
+    var roomInfo = {
+        id: genId.generate(),
+        users: [ { id: peerid, nickname: nickname} ]
+    };
+    return rooms.insertAsync(roomInfo);
 };
 
 exports.delete = function(roomid, peerid) {
-    return Q.promise(function(resolve, reject) {
-        Q.ninvoke(rooms, "findOne", { id: roomid })
-        .then(function(room) {
-            if (!room) return reject(Error("Room does not exist"));
-            console.log(room);
-            for (var a = 0; a < room.users.length; ++a)
-                if (room.users[a].id === peerid) {
-                    room.users.splice(a, 1);
-                    break;
-                }
-            if (!room.users.length)
-                Q.ninvoke(rooms, "remove", { id: roomid })
-                .then (function() {
-                    resolve();
-                });
-            else
-                Q.ninvoke(rooms, "update", { id: roomid }, { $set: room })
-                .then(function() {
-                    resolve();
-                });
-        })
-        .fail(function(err) {
-            reject(err);
+    return rooms.findOneAsync({ id: roomid })
+    .then(function(room) {
+        if (!room) throw Error("Room does not exist");
+        var pos = -1;
+        room.users.forEach(function(e, i) {
+            if (e.id === peerid) pos = i;
         });
+        if (pos === -1) throw Error("User does not exist in room");
+        room.users.splice(pos, 1);
+        if (!room.users.length)
+            return rooms.removeAsync({ id: roomid });
+        else
+            return rooms.updateAsync({ id: roomid }, { $set: room });
+
     });
 };
 
 exports.get = function(roomid) { // All peers
-    return Q.promise(function(resolve, reject) {
-        Q.ninvoke(rooms, "findOne", { id: roomid })
-        .then(function(room) {
-            if (!room) return reject(Error("Room does not exist"));
-            resolve(room.users);
-        })
-        .fail(function(err) {
-            reject(err);
-        });
+    return rooms.findOneAsync({ id: roomid })
+    .then(function(room) {
+        if (!room) throw Error("Room does not exist");
+        return room.users;
     });
 };
 
 exports.join = function(roomid, peerid, nickname) {
-    return Q.promise(function(resolve, reject) {
-        Q.ninvoke(rooms, "findOne", { id: roomid })
-        .then(function(room) {
-            if (!room) return reject(Error("Room does not exist"));
-            var present = false;
-            for (var a = 0; a < room.users.length; ++a)
-                if (room.users[a].id === peerid) {
-                    present = true;
-                    break;
-                }
-            if (!present)
-                room.users.push({ "id": peerid, "nickname": nickname });
-            Q.ninvoke(rooms, "update", { id: roomid }, { $set: room })
-            .then(function() {
-                resolve();
-            });
-        })
-        .fail(function(err) {
-            reject(err);
+    return rooms.findOneAsync({ id: roomid })
+    .then(function(room) {
+        if (!room) throw Error("Room does not exist");
+        var present = false;
+        room.users.forEach(function(e, i) {
+            if (e.id === peerid) present = true;
         });
+        if (!present) room.users.push({ id: peerid, nickname: nickname });
+        return rooms.updateAsync({ id: roomid }, { $set: room });
     });
 };

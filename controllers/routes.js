@@ -4,7 +4,7 @@ var router = express.Router();
 /* Rooms */
 router.use("/room", require("./rooms.js"));
 
-router.get("/", function(req, res, next) {
+router.get("/", function(req, res) {
     res.render("index", {
         layout: false
     });
