@@ -18,8 +18,8 @@
   "homepage": "https://github.com/yicheng340/Syncfony#readme",
   "dependencies": {
     "bluebird": "^3.5.1",
-    "body-parser": "^1.15.0",
-    "compression": "^1.7.2",
+    "body-parser": "^1.18.3",
+    "compression": "^1.7.3",
     "console-stamp": "^0.2.0",
     "dateformat": "^3.0.3",
     "express": "^4.16.3",
